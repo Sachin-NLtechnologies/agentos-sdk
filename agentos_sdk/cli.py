@@ -31,7 +31,25 @@ def cmd_new(a):
     from .scaffold import new_agent
     dest, pkg = new_agent(a.name, a.type, a.dir)
     print(f"scaffolded {a.name} -> {dest} (package {pkg})")
-    print("next: cd", dest, "; pip install -e . ; agentos login --url <p> --key aos_... ; agentos run")
+    if a.type == "headless":
+        print(
+            f"\nnext:\n"
+            f"  cd {dest}\n"
+            f"  pip install -e .\n"
+            f"  python -m agentos_sdk login --url <platform-url> --key aos_...\n"
+            f"  python -m agentos_sdk run\n"
+            f"\n(tip: 'agentos' is an alias for 'python -m agentos_sdk' — use the latter if agentos isn't on PATH)"
+        )
+    else:  # full / full-ai
+        print(
+            f"\nnext:\n"
+            f"  1. cd {dest}                        <- IMPORTANT: run compose from INSIDE this folder\n"
+            f"  2. copy your provisioned .env into {dest}/.env\n"
+            f"  3. docker compose --env-file .env up -d --build\n"
+            f"  4. platform dashboard -> '{a.name}' turns ONLINE within ~30s -> click Run\n"
+            f"\n(tip: if 'agentos' isn't found, use: python -m agentos_sdk ...)\n"
+            f"(tip: see README.md in {dest}/ for full setup and troubleshooting)"
+        )
 
 def build_parser():
     p = argparse.ArgumentParser(prog='agentos')
