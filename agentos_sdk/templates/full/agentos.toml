@@ -1,0 +1,4 @@
+[agent]
+package = "__PKG__"
+[platform]
+url = "http://localhost:8088"

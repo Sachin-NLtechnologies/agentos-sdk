@@ -1,0 +1,2 @@
+[console_scripts]
+agentos = agentos_sdk.cli:main

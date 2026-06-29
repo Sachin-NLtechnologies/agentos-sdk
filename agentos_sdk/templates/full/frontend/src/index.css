@@ -1,0 +1,13 @@
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background-color: #0B0A12;
+  color: #F4F2FF;
+}
+
+.glass {
+  background: rgba(30, 27, 46, 0.55);
+  border: 1px solid rgba(160, 140, 255, 0.14);
+  backdrop-filter: blur(14px);
+  border-radius: 16px;
+}

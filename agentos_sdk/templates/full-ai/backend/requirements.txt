@@ -1,0 +1,6 @@
+django>=5.1,<5.2
+djangorestframework
+django-cors-headers
+python-dotenv
+requests
+-e ../../agentos_sdk

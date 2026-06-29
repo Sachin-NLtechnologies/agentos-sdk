@@ -1,0 +1,51 @@
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: __AGENT_ID__/backend/Dockerfile
+    image: agentos-__AGENT_ID__-backend:latest
+    environment:
+      - AGENTOS_OIDC_ISSUER=${AGENTOS_OIDC_ISSUER}
+      - AGENTOS_OIDC_PUBLIC_ISSUER=${AGENTOS_OIDC_PUBLIC_ISSUER}
+      - AGENTOS_CLIENT_ID=${AGENTOS_CLIENT_ID}
+      - AGENTOS_CLIENT_SECRET=${AGENTOS_CLIENT_SECRET}
+      - AGENTOS_REDIRECT_URI=${AGENTOS_REDIRECT_URI}
+      - AGENTOS_LOGIN_REDIRECT=${AGENTOS_LOGIN_REDIRECT:-/}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+    volumes:
+      - __PKG___data:/app/__AGENT_ID__/backend
+    restart: always
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: __AGENT_ID__/frontend/Dockerfile
+    image: agentos-__AGENT_ID__-frontend:latest
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    restart: always
+
+  connector:
+    image: agentos-__AGENT_ID__-backend:latest
+    command: ["python", "manage.py", "connect_platform"]
+    environment:
+      - AGENTOS_UI_URL=${AGENTOS_UI_URL}
+      - AGENTOS_URL=${AGENTOS_URL:-http://host.docker.internal:8088}
+      - AGENTOS_KEY=${AGENTOS_KEY}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - __PKG___data:/app/__AGENT_ID__/backend
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  __PKG___data:

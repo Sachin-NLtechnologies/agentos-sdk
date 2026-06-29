@@ -1,0 +1,85 @@
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: __AGENT_ID__/backend/Dockerfile
+    image: agentos-__AGENT_ID__-backend:latest
+    environment:
+      - AGENTOS_OIDC_ISSUER=${AGENTOS_OIDC_ISSUER}
+      - AGENTOS_OIDC_PUBLIC_ISSUER=${AGENTOS_OIDC_PUBLIC_ISSUER}
+      - AGENTOS_CLIENT_ID=${AGENTOS_CLIENT_ID}
+      - AGENTOS_CLIENT_SECRET=${AGENTOS_CLIENT_SECRET}
+      - AGENTOS_REDIRECT_URI=${AGENTOS_REDIRECT_URI}
+      - AGENTOS_LOGIN_REDIRECT=${AGENTOS_LOGIN_REDIRECT:-/}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+      - OLLAMA_URL=http://ollama:11434
+      - VLM_MODEL=${VLM_MODEL:-qwen2.5vl:3b}
+    volumes:
+      - __PKG___data:/app/__AGENT_ID__/backend
+    depends_on:
+      - ollama
+    restart: always
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: __AGENT_ID__/frontend/Dockerfile
+    image: agentos-__AGENT_ID__-frontend:latest
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    restart: always
+
+  connector:
+    image: agentos-__AGENT_ID__-backend:latest
+    command: ["python", "manage.py", "connect_platform"]
+    environment:
+      - AGENTOS_UI_URL=${AGENTOS_UI_URL}
+      - AGENTOS_URL=${AGENTOS_URL:-http://host.docker.internal:8088}
+      - AGENTOS_KEY=${AGENTOS_KEY}
+      - OLLAMA_URL=http://ollama:11434
+      - VLM_MODEL=${VLM_MODEL:-qwen2.5vl:3b}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - __PKG___data:/app/__AGENT_ID__/backend
+    depends_on:
+      - backend
+    restart: always
+
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama_data:/root/.ollama
+    # NOTE: To run on CPU, leave the deploy section commented out.
+    # To enable GPU acceleration (highly recommended for VLMs), install nvidia-container-toolkit and uncomment:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+    restart: always
+
+  ollama-pull:
+    image: curlimages/curl:latest
+    command: >
+      sh -c "
+      echo 'Waiting for Ollama...' &&
+      until curl -s http://ollama:11434/api/tags >/dev/null; do sleep 2; done &&
+      echo 'Ollama is online. Pulling Qwen 2.5 VL model...' &&
+      curl -X POST http://ollama:11434/api/pull -d '{\"name\": \"qwen2.5vl:3b\"}'
+      "
+    depends_on:
+      - ollama
+
+volumes:
+  __PKG___data:
+  ollama_data:

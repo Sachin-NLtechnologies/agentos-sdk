@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentos-sdk"
+version = "0.2.0"
+description = "Official Python SDK + CLI for AgentOS"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "requests>=2.25.0",
+    "tomli>=2.0; python_version < '3.11'",
+]
+
+[project.scripts]
+agentos = "agentos_sdk.cli:main"
+
+[project.urls]
+"Homepage" = "https://github.com/agentos/agentos-sdk"
+
+[tool.setuptools.packages.find]
+include = ["agentos_sdk*"]
+
+[tool.setuptools.package-data]
+agentos_sdk = ["templates/**/*"]
+
+[tool.setuptools]
+include-package-data = true
