@@ -14,8 +14,8 @@ platform, and runs an Ollama-backed action through the platform's **Run** button
 cd agentOS && docker compose up -d        # if not already running
 
 # install the CLI + SDK from GitHub (public repo)
-pip install "agentos-sdk @ git+https://github.com/Sachin-NLtechnologies/agentos-sdk.git@v0.2.0"
-agentos --help        # should list: login / status / run / new
+pip install "agentos-sdk @ git+https://github.com/Sachin-NLtechnologies/agentos-sdk.git@v0.2.2"
+python -m agentos_sdk --help        # should list: login / status / run / new  (PATH-proof invocation)
 ```
 Also need: Docker, and (recommended) an NVIDIA GPU for Ollama — CPU works but slow.
 
@@ -48,7 +48,7 @@ AGENTOS_LOGIN_REDIRECT=http://localhost:3001/
 
 ## 2. Scaffold the agent code
 ```bash
-agentos new arnotes --type full-ai --dir .
+python -m agentos_sdk new arnotes --type full-ai
 ```
 Makes `./arnotes/` with `backend/` (Django), `frontend/` (Vite React TS), `docker-compose.yml`, ollama services.
 `__AGENT_ID__`/`__PKG__` are already replaced with `arnotes`.
