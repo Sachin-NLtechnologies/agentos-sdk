@@ -3,4 +3,4 @@ djangorestframework
 django-cors-headers
 python-dotenv
 requests
--e ../../agentos_sdk
+agentos-sdk @ git+https://github.com/Sachin-NLtechnologies/agentos-sdk.git@v0.2.0

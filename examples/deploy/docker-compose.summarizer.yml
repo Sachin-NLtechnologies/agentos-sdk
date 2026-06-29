@@ -1,0 +1,14 @@
+# Place this at repo root as  deploy/docker-compose.summarizer.yml  (context below assumes that).
+services:
+  summarizer:
+    build:
+      context: ..                       # repo root (LLM/), so it can see agentos_sdk/ and agents/
+      dockerfile: deploy/Dockerfile.agent
+      args:
+        AGENT: summarizer
+    environment:
+      - AGENTOS_URL=${AGENTOS_URL:-http://host.docker.internal:8088}
+      - AGENTOS_KEY=${AGENTOS_KEY}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: always

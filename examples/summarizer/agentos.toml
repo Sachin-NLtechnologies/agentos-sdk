@@ -1,0 +1,6 @@
+[agent]
+package = "summarizer"
+
+[platform]
+url = "http://localhost:8088"
+# key comes from `agentos login` or AGENTOS_KEY env

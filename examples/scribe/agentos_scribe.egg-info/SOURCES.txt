@@ -1,0 +1,11 @@
+pyproject.toml
+agentos_scribe.egg-info/PKG-INFO
+agentos_scribe.egg-info/SOURCES.txt
+agentos_scribe.egg-info/dependency_links.txt
+agentos_scribe.egg-info/requires.txt
+agentos_scribe.egg-info/top_level.txt
+scribe/__init__.py
+scribe/handler.py
+scribe/manifest.py
+scribe/actions/__init__.py
+scribe/actions/transcribe.py

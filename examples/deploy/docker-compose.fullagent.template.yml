@@ -1,0 +1,32 @@
+# Template for an agent that has its OWN UI + DB. Copy into the agent's repo, fill in builds.
+services:
+  backend:
+    build: { context: ., dockerfile: backend/Dockerfile }
+    # e.g. command: gunicorn config.wsgi --bind 0.0.0.0:8000   (or runserver for dev)
+    volumes:
+      - app_data:/data            # sqlite/media persistence
+    restart: always
+
+  frontend:
+    build: { context: ., dockerfile: frontend/Dockerfile }
+    ports:
+      - "3001:3001"               # the agent's OWN UI
+    depends_on: [backend]
+    restart: always
+
+  connector:
+    # App-attached: reuse the backend image; its handler calls the agent's services in-process.
+    build: { context: ., dockerfile: backend/Dockerfile }
+    command: ["python", "manage.py", "connect_platform"]   # or ["agentos","run"] for headless
+    environment:
+      - AGENTOS_URL=${AGENTOS_URL:-http://host.docker.internal:8088}
+      - AGENTOS_KEY=${AGENTOS_KEY}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - app_data:/data            # SAME volume as backend (shares the agent's DB)
+    depends_on: [backend]
+    restart: always
+
+volumes:
+  app_data:

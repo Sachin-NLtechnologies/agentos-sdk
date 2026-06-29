@@ -10,14 +10,14 @@ class Command(BaseCommand):
         self.stdout.write('Starting AgentOS AI connector...')
         
         manifest = {
-            'agent_id': '__AGENT_ID__',
+            'agent_id': os.getenv('AGENTOS_AGENT_ID', '__AGENT_ID__'),
             'version': '1.0.0',
             'team': 'core',
             'capabilities': ['example'],
             'actions': [
                 {'label': 'Query Local AI Model', 'action': 'EXAMPLE'},
             ],
-            'ui_url': os.getenv('AGENTOS_UI_URL', 'http://localhost:3001'),
+            'ui_url': os.getenv('AGENTOS_UI_URL', f"http://localhost:{os.getenv('AGENT_PORT', '3001')}"),
         }
 
         def handler(action, payload):
@@ -25,11 +25,12 @@ class Command(BaseCommand):
             if action == 'EXAMPLE':
                 text = payload.get('text', 'Hello, how are you?')
                 ollama_url = os.getenv('OLLAMA_URL', 'http://localhost:11434')
+                vlm_model = os.getenv('VLM_MODEL', 'qwen2.5vl:3b')
                 try:
                     r = requests.post(
                         f"{ollama_url}/api/chat",
                         json={
-                            "model": "qwen2.5-vl:3b",
+                            "model": vlm_model,
                             "messages": [{"role": "user", "content": text}],
                             "stream": False
                         },
@@ -49,7 +50,7 @@ class Command(BaseCommand):
                         'output': {
                             'error': f"Ollama query failed: {e}",
                             'echo': text,
-                            'note': 'Ensure Ollama is running and qwen2.5-vl:3b is pulled.'
+                            'note': f'Ensure Ollama is running and {vlm_model} is pulled.'
                         },
                         'usage': {'tokens_in': len(text.split()), 'cost': 0.0}
                     }

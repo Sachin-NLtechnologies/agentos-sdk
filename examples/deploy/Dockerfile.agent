@@ -1,0 +1,11 @@
+# Generic AgentOS connector image for a headless agent (the connector IS the agent).
+# Build context MUST be the repo root (so it can see agentos_sdk/ and agents/).
+FROM python:3.12-slim
+WORKDIR /app
+ARG AGENT=summarizer
+COPY agentos_sdk /app/agentos_sdk
+COPY agents/${AGENT} /app/agent
+RUN pip install --no-cache-dir -e /app/agentos_sdk -e /app/agent
+WORKDIR /app/agent
+# agentos.toml [agent].package is read here; AGENTOS_URL/KEY come from env (override the toml).
+CMD ["agentos", "run"]

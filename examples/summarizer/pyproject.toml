@@ -1,0 +1,6 @@
+[project]
+name = "agentos-summarizer"
+version = "1.0.0"
+dependencies = ["agentos-sdk"]
+[project.scripts]
+# run via: agentos run   (from the agentos-sdk package)

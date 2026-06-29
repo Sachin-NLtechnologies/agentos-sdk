@@ -1,0 +1,5 @@
+[project]
+name = "agentos-scribe"
+version = "1.0.0"
+dependencies = ["agentos-sdk"]
+# optional real STT engine:  pip install faster-whisper

@@ -1,0 +1,5 @@
+[agent]
+package = "scribe"
+
+[platform]
+url = "http://localhost:8088"

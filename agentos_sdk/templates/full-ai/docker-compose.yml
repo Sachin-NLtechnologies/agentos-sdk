@@ -1,8 +1,8 @@
 services:
   backend:
     build:
-      context: ..
-      dockerfile: __AGENT_ID__/backend/Dockerfile
+      context: backend
+      dockerfile: Dockerfile
     image: agentos-__AGENT_ID__-backend:latest
     environment:
       - AGENTOS_OIDC_ISSUER=${AGENTOS_OIDC_ISSUER}
@@ -17,18 +17,18 @@ services:
       - OLLAMA_URL=http://ollama:11434
       - VLM_MODEL=${VLM_MODEL:-qwen2.5vl:3b}
     volumes:
-      - __PKG___data:/app/__AGENT_ID__/backend
+      - __PKG___data:/app
     depends_on:
       - ollama
     restart: always
 
   frontend:
     build:
-      context: ..
-      dockerfile: __AGENT_ID__/frontend/Dockerfile
+      context: frontend
+      dockerfile: Dockerfile
     image: agentos-__AGENT_ID__-frontend:latest
     ports:
-      - "3001:3001"
+      - "${AGENT_PORT:-3001}:3001"
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -40,15 +40,16 @@ services:
     image: agentos-__AGENT_ID__-backend:latest
     command: ["python", "manage.py", "connect_platform"]
     environment:
-      - AGENTOS_UI_URL=${AGENTOS_UI_URL}
+      - AGENTOS_UI_URL=${AGENTOS_UI_URL:-http://localhost:3001}
       - AGENTOS_URL=${AGENTOS_URL:-http://host.docker.internal:8088}
       - AGENTOS_KEY=${AGENTOS_KEY}
+      - AGENTOS_AGENT_ID=${AGENTOS_AGENT_ID}
       - OLLAMA_URL=http://ollama:11434
       - VLM_MODEL=${VLM_MODEL:-qwen2.5vl:3b}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - __PKG___data:/app/__AGENT_ID__/backend
+      - __PKG___data:/app
     depends_on:
       - backend
     restart: always

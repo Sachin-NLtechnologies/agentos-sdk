@@ -9,14 +9,14 @@ class Command(BaseCommand):
         self.stdout.write('Starting AgentOS connector...')
         
         manifest = {
-            'agent_id': '__AGENT_ID__',
+            'agent_id': os.getenv('AGENTOS_AGENT_ID', '__AGENT_ID__'),
             'version': '1.0.0',
             'team': 'core',
             'capabilities': ['example'],
             'actions': [
                 {'label': 'Example action', 'action': 'EXAMPLE'},
             ],
-            'ui_url': os.getenv('AGENTOS_UI_URL', 'http://localhost:3001'),
+            'ui_url': os.getenv('AGENTOS_UI_URL', f"http://localhost:{os.getenv('AGENT_PORT', '3001')}"),
         }
 
         def handler(action, payload):
