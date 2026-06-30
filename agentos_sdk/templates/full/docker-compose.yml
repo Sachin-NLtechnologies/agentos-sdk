@@ -15,7 +15,7 @@ services:
       - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
     volumes:
-      - __PKG___data:/app
+      - __PKG___data:/data
     restart: always
 
   frontend:
@@ -43,7 +43,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - __PKG___data:/app
+      - __PKG___data:/data
     depends_on:
       - backend
     restart: always
