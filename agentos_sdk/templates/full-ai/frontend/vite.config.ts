@@ -7,6 +7,7 @@ export default defineConfig({
     host: true,
     port: 3001,
     strictPort: true,
+    allowedHosts: true,
     proxy: {
       '/api': { target: 'http://backend:8000', changeOrigin: false },
     },
