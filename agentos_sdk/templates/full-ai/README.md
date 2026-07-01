@@ -28,9 +28,19 @@ AgentOS agent with a Django backend, React frontend, and local Ollama VLM.
 
 The UI runs on `AGENT_PORT` (from your `.env`, auto-assigned by provision so agents don't clash). Edit `.env` to override.
 
-## Customise
+## Actions — what shows up as "Run" on the platform
 
-Edit `backend/__PKG__/accounts/management/commands/connect_platform.py` — handler logic, actions, model choice (`VLM_MODEL` env var, default `qwen2.5vl:3b`).
+Runnable actions come from manifest['actions'] in
+backend/__PKG__/accounts/management/commands/connect_platform.py:
+    'actions': [ {'label': 'Summarize text', 'action': 'SUMMARIZE'} ]
+
+Each becomes a Run button on your agent's page. Clicking it sends {action, input} to
+handler(action, payload); whatever you return as `output` shows back on the platform.
+
+Add one: 1) add {'label','action'} to actions  2) add `if action=='X':` in handler,
+return {'output':{...},'usage':{...}}  3) restart the agent -> it re-registers, button appears.
+Inputs: platform passes a JSON `input`; read keys from `payload` (e.g. payload.get('text')).
+Document your expected keys here. You never touch platform code.
 
 ## Troubleshooting
 

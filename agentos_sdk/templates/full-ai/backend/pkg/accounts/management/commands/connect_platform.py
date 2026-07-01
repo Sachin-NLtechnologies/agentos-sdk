@@ -9,6 +9,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write('Starting AgentOS AI connector...')
         
+        # ── AgentOS action contract ───────────────────────────────────────────────
+        # Everything in manifest['actions'] becomes a "Run" button on the AgentOS platform.
+        # When someone clicks Run, the platform calls handler(action, payload) below with
+        # {action, input}. Return {"output": {...}, "usage": {...}} and it shows on the platform.
+        # Add an action: (1) add {'label','action'} to manifest['actions'];
+        #                (2) add an `if action == 'YOUR_ACTION':` branch in handler.
+        # You never edit platform code — this manifest is the whole contract.
+        # ──────────────────────────────────────────────────────────────────────────
         manifest = {
             'agent_id': os.getenv('AGENTOS_AGENT_ID', '__AGENT_ID__'),
             'version': '1.0.0',
