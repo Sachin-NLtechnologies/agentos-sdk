@@ -40,9 +40,10 @@ class Command(BaseCommand):
                         json={
                             "model": vlm_model,
                             "messages": [{"role": "user", "content": text}],
-                            "stream": False
+                            "stream": False,
+                            "keep_alive": "1h"
                         },
-                        timeout=60
+                        timeout=(10, 600)
                     )
                     if r.status_code == 200:
                         ans = r.json().get('message', {}).get('content', '')
