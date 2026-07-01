@@ -1,0 +1,23 @@
+# node
+node_modules/
+dist/
+build/
+.vite/
+# python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+# env / secrets
+.env
+.env.*
+!.env.example
+# db / data
+*.sqlite3
+db.sqlite3
+ollama_data/
+# os / editor
+.DS_Store
+.idea/
+.vscode/

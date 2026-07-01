@@ -9,13 +9,14 @@ class OIDCClient:
     public_issuer = browser-reachable base (authorize redirect); issuer = server-to-server base (token/userinfo).
     """
     def __init__(self, issuer, client_id, client_secret, redirect_uri,
-                 scope="openid email org", public_issuer=None):
+                 scope="openid email org", public_issuer=None, insecure_tls=False):
         self.issuer = (issuer or "").rstrip('/')
         self.public_issuer = (public_issuer or issuer or "").rstrip('/')
         self.client_id = client_id
         self.client_secret = client_secret
         self.redirect_uri = redirect_uri
         self.scope = scope
+        self.verify = not insecure_tls
 
     def start(self):
         verifier = _b64(secrets.token_bytes(32))
@@ -33,10 +34,10 @@ class OIDCClient:
             "grant_type": "authorization_code", "code": code,
             "redirect_uri": self.redirect_uri, "client_id": self.client_id,
             "client_secret": self.client_secret, "code_verifier": verifier,
-        }, timeout=15)
+        }, timeout=15, verify=self.verify)
         r.raise_for_status(); return r.json()
 
     def userinfo(self, access_token):
         r = requests.get(f"{self.issuer}/o/userinfo/",
-                         headers={"Authorization": "Bearer " + access_token}, timeout=15)
+                         headers={"Authorization": "Bearer " + access_token}, timeout=15, verify=self.verify)
         r.raise_for_status(); return r.json()

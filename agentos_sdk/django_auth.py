@@ -23,6 +23,7 @@ def _client():
         _g('AGENTOS_REDIRECT_URI'),
         scope=_g('AGENTOS_SCOPE', 'openid email org'),
         public_issuer=_g('AGENTOS_OIDC_PUBLIC_ISSUER'),
+        insecure_tls=(_g('AGENTOS_INSECURE_TLS') == '1' or _g('AGENTOS_INSECURE_TLS') == 1)
     )
 
 def agentos_start(request):
