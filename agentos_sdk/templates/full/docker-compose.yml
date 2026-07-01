@@ -14,6 +14,7 @@ services:
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
       - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+      - AGENTOS_INSECURE_TLS=${AGENTOS_INSECURE_TLS:-1}
     volumes:
       - __PKG___data:/data
     restart: always
