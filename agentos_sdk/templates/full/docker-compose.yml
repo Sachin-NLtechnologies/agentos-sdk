@@ -29,6 +29,7 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+      - ../certs:/certs:ro
     depends_on:
       - backend
     restart: always
@@ -41,6 +42,7 @@ services:
       - AGENTOS_URL=${AGENTOS_URL:-http://host.docker.internal:8088}
       - AGENTOS_KEY=${AGENTOS_KEY}
       - AGENTOS_AGENT_ID=${AGENTOS_AGENT_ID}
+      - AGENTOS_INSECURE_TLS=${AGENTOS_INSECURE_TLS:-1}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
