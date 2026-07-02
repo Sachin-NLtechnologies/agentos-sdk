@@ -47,11 +47,11 @@ The UI runs on `AGENT_PORT` (from your `.env`). If two agents clash, change `AGE
 This agent serves the browser UI over mkcert HTTPS. On each host, create the local cert files before starting the frontend:
 
 ```bash
-mkdir -p ../certs
-mkcert -cert-file ../certs/cert.pem -key-file ../certs/key.pem vbsagent 192.168.1.50 localhost 127.0.0.1 host.docker.internal
+mkdir -p C:/agentos-certs
+mkcert -cert-file C:/agentos-certs/cert.pem -key-file C:/agentos-certs/key.pem vbsagent 192.168.1.50 localhost 127.0.0.1 host.docker.internal
 ```
 
-The cert files are host-local secrets and are intentionally not committed. If the frontend exits with `/certs/key.pem` missing, generate the certs above and run:
+The cert files are host-local secrets and are intentionally not committed. `CERT_DIR` defaults to `C:/agentos-certs`, so every agent can move folders and still mount the same cert. If the frontend exits with `/certs/key.pem` missing, generate the certs above and run:
 
 ```bash
 docker compose --env-file .env up -d --build frontend
