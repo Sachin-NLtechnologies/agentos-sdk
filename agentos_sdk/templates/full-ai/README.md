@@ -57,6 +57,22 @@ The cert files are host-local secrets and are intentionally not committed. `CERT
 docker compose --env-file .env up -d --build frontend
 ```
 
+## Trusting HTTPS on client devices
+
+The platform and agents use an mkcert self-signed CA. Each device that opens the apps must trust that CA once, or Chrome shows "Not secure" warnings.
+
+Per device, one time:
+
+- Easiest, if mkcert is on the machine: `mkcert -install`
+- Admin PowerShell: `certutil -addstore -f "Root" "C:\Users\<you>\AppData\Local\mkcert\rootCA.pem"`
+- Or rename `rootCA.pem` to `rootCA.crt`, double-click it, then install it to `Local Machine` -> `Trusted Root Certification Authorities`.
+
+Restart the browser. Then `https://vbsagent:<port>` shows a padlock with no warning.
+
+For many company machines, push `rootCA.pem` to the Trusted Root store via GPO or Intune once. Then all managed machines trust it automatically.
+
+For zero per-device client setup, use a real domain plus Let's Encrypt through a reverse proxy instead of mkcert. Trade-off: it needs a domain and proxy.
+
 ## Troubleshooting
 
 | Symptom | Fix |
