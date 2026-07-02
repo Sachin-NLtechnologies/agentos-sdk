@@ -42,6 +42,21 @@ return {'output':{...},'usage':{...}}  3) restart the agent -> it re-registers, 
 Inputs: platform passes a JSON `input`; read keys from `payload` (e.g. payload.get('text')).
 Document your expected keys here. You never touch platform code.
 
+## Local HTTPS Certs
+
+This agent serves the browser UI over mkcert HTTPS. On each host, create the local cert files before starting the frontend:
+
+```bash
+mkdir -p ../certs
+mkcert -cert-file ../certs/cert.pem -key-file ../certs/key.pem vbsagent 192.168.1.50 localhost 127.0.0.1 host.docker.internal
+```
+
+The cert files are host-local secrets and are intentionally not committed. If the frontend exits with `/certs/key.pem` missing, generate the certs above and run:
+
+```bash
+docker compose --env-file .env up -d --build frontend
+```
+
 ## Troubleshooting
 
 | Symptom | Fix |

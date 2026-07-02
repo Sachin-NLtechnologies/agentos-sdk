@@ -4,4 +4,4 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 EXPOSE 3001
-CMD ["npm","run","dev","--","--host","--port","3001"]
+CMD ["sh","-c","if [ ! -f /certs/key.pem ] || [ ! -f /certs/cert.pem ]; then echo 'ERROR: mkcert cert missing. Expected /certs/key.pem and /certs/cert.pem. Run mkcert on this host and mount certs/ before docker compose up.'; exit 1; fi; npm run dev -- --host --port 3001"]
