@@ -24,6 +24,22 @@ AgentOS agent with a Django backend, React frontend, and local Ollama VLM.
 
 4. Platform dashboard → **`__AGENT_ID__`** turns **ONLINE** within ~30s → **Open** opens the UI → **Run** executes an action.
 
+## Local Vs Deployment
+
+Local development keeps the fast feedback loop:
+
+```bash
+docker compose --env-file .env up -d --build
+```
+
+Deployment uses Gunicorn for the backend and an nginx-served built frontend over mkcert HTTPS:
+
+```bash
+docker compose -f docker-compose.prod.yml --env-file .env up -d --build
+```
+
+In local development, the frontend maps `AGENT_PORT` to Vite on container port `3001`. In deployment, it maps `AGENT_PORT` to nginx on container port `443`.
+
 ## Ports
 
 The UI runs on `AGENT_PORT` (from your `.env`, auto-assigned by provision so agents don't clash). Edit `.env` to override.

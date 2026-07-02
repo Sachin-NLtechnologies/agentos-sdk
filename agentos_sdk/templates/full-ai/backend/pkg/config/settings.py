@@ -77,6 +77,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # CORS and CSRF Settings
 CORS_ALLOW_ALL_ORIGINS = False
@@ -101,14 +102,14 @@ AGENTOS_CLIENT_SECRET = os.getenv("AGENTOS_CLIENT_SECRET", "")
 AGENTOS_REDIRECT_URI = os.getenv("AGENTOS_REDIRECT_URI", "http://localhost:3001/api/auth/agentos/callback/")
 AGENTOS_LOGIN_REDIRECT = os.getenv("AGENTOS_LOGIN_REDIRECT", "/")
 
-# Cookies setup for local http development (non-secure Lax cookies)
 SESSION_COOKIE_NAME = "__PKG___sessionid"
 CSRF_COOKIE_NAME = "__PKG___csrftoken"
 CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = env_bool("CSRF_COOKIE_SECURE", False)
+SESSION_COOKIE_SECURE = env_bool("SESSION_COOKIE_SECURE", False)
 SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [

@@ -1,0 +1,83 @@
+services:
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile.prod
+    image: agentos-__AGENT_ID__-backend:prod
+    environment:
+      - DEBUG=False
+      - AGENTOS_URL=${AGENTOS_URL:-http://host.docker.internal:8088}
+      - AGENTOS_KEY=${AGENTOS_KEY}
+      - AGENTOS_OIDC_ISSUER=${AGENTOS_OIDC_ISSUER}
+      - AGENTOS_OIDC_PUBLIC_ISSUER=${AGENTOS_OIDC_PUBLIC_ISSUER}
+      - AGENTOS_CLIENT_ID=${AGENTOS_CLIENT_ID}
+      - AGENTOS_CLIENT_SECRET=${AGENTOS_CLIENT_SECRET}
+      - AGENTOS_REDIRECT_URI=${AGENTOS_REDIRECT_URI}
+      - AGENTOS_LOGIN_REDIRECT=${AGENTOS_LOGIN_REDIRECT:-/}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+      - SESSION_COOKIE_SECURE=${SESSION_COOKIE_SECURE:-True}
+      - CSRF_COOKIE_SECURE=${CSRF_COOKIE_SECURE:-True}
+      - OLLAMA_URL=http://ollama:11434
+      - VLM_MODEL=${VLM_MODEL:-qwen2.5vl:3b}
+      - AGENTOS_INSECURE_TLS=${AGENTOS_INSECURE_TLS:-1}
+    volumes:
+      - __PKG___data:/data
+    depends_on:
+      - ollama
+    restart: always
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile.prod
+    image: agentos-__AGENT_ID__-frontend:prod
+    ports:
+      - "${AGENT_PORT:-3001}:443"
+    volumes:
+      - ${CERT_DIR:-C:/agentos-certs}:/certs:ro
+    depends_on:
+      - backend
+    restart: always
+
+  connector:
+    image: agentos-__AGENT_ID__-backend:prod
+    command: ["python", "manage.py", "connect_platform"]
+    environment:
+      - AGENTOS_UI_URL=${AGENTOS_UI_URL:-https://localhost:3001}
+      - AGENTOS_URL=${AGENTOS_URL:-http://host.docker.internal:8088}
+      - AGENTOS_KEY=${AGENTOS_KEY}
+      - AGENTOS_AGENT_ID=${AGENTOS_AGENT_ID}
+      - OLLAMA_URL=http://ollama:11434
+      - VLM_MODEL=${VLM_MODEL:-qwen2.5vl:3b}
+      - AGENTOS_INSECURE_TLS=${AGENTOS_INSECURE_TLS:-1}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - __PKG___data:/data
+    depends_on:
+      - backend
+    restart: always
+
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: always
+
+  ollama-pull:
+    image: curlimages/curl:latest
+    command: >
+      sh -c "
+      echo 'Waiting for Ollama...' &&
+      until curl -s http://ollama:11434/api/tags >/dev/null; do sleep 2; done &&
+      echo 'Ollama is online. Pulling Qwen 2.5 VL model...' &&
+      curl -X POST http://ollama:11434/api/pull -d '{\"name\": \"qwen2.5vl:3b\"}'
+      "
+    depends_on:
+      - ollama
+
+volumes:
+  __PKG___data:
+  ollama_data:

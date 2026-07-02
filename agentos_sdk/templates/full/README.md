@@ -38,6 +38,22 @@ return {'output':{...},'usage':{...}}  3) restart the agent -> it re-registers, 
 Inputs: platform passes a JSON `input`; read keys from `payload` (e.g. payload.get('text')).
 Document your expected keys here. You never touch platform code.
 
+## Local Vs Deployment
+
+Local development keeps the fast feedback loop:
+
+```bash
+docker compose --env-file .env up -d --build
+```
+
+Deployment uses Gunicorn for the backend and an nginx-served built frontend over mkcert HTTPS:
+
+```bash
+docker compose -f docker-compose.prod.yml --env-file .env up -d --build
+```
+
+In local development, the frontend maps `AGENT_PORT` to Vite on container port `3001`. In deployment, it maps `AGENT_PORT` to nginx on container port `443`.
+
 ## Ports
 
 The UI runs on `AGENT_PORT` (from your `.env`). If two agents clash, change `AGENT_PORT` in the `.env` and re-`up`.
