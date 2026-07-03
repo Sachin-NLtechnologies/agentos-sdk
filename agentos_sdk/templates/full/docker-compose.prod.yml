@@ -42,6 +42,9 @@ services:
     restart: always
 
   connector:
+    build:
+      context: backend
+      dockerfile: Dockerfile.prod
     image: agentos-__SLUG__-backend:prod
     command: ["python", "manage.py", "connect_platform"]
     environment:
