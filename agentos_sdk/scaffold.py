@@ -12,7 +12,8 @@ def new_agent(name, type_="headless", target_dir="."):
     if not src.exists():
         raise SystemExit(f"unknown template type: {type_}")
     pkg = _pkg_name(name)
-    dest = Path(target_dir) / name
+    slug = re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
+    dest = Path(target_dir) / slug
     if dest.exists(): raise SystemExit(f"{dest} already exists")
     shutil.copytree(src, dest)
     
@@ -26,7 +27,7 @@ def new_agent(name, type_="headless", target_dir="."):
         if f.is_file():
             try:
                 content = f.read_text(encoding="utf-8")
-                new_content = content.replace("__AGENT_ID__", name).replace("__PKG__", pkg)
+                new_content = content.replace("__AGENT_ID__", name).replace("__PKG__", pkg).replace("__SLUG__", slug)
                 if new_content != content:
                     f.write_text(new_content, encoding="utf-8")
             except UnicodeDecodeError:

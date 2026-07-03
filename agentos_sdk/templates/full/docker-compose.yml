@@ -1,9 +1,11 @@
+name: __SLUG__
+
 services:
   backend:
     build:
       context: backend
       dockerfile: Dockerfile
-    image: agentos-__AGENT_ID__-backend:latest
+    image: agentos-__SLUG__-backend:latest
     environment:
       - AGENTOS_OIDC_ISSUER=${AGENTOS_OIDC_ISSUER}
       - AGENTOS_OIDC_PUBLIC_ISSUER=${AGENTOS_OIDC_PUBLIC_ISSUER}
@@ -23,7 +25,7 @@ services:
     build:
       context: frontend
       dockerfile: Dockerfile
-    image: agentos-__AGENT_ID__-frontend:latest
+    image: agentos-__SLUG__-frontend:latest
     ports:
       - "${AGENT_PORT:-3001}:3001"
     volumes:
@@ -35,7 +37,7 @@ services:
     restart: always
 
   connector:
-    image: agentos-__AGENT_ID__-backend:latest
+    image: agentos-__SLUG__-backend:latest
     command: ["python", "manage.py", "connect_platform"]
     environment:
       - AGENTOS_UI_URL=${AGENTOS_UI_URL:-http://localhost:3001}

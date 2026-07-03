@@ -1,9 +1,11 @@
+name: __SLUG__
+
 services:
   backend:
     build:
       context: backend
       dockerfile: Dockerfile.prod
-    image: agentos-__AGENT_ID__-backend:prod
+    image: agentos-__SLUG__-backend:prod
     environment:
       - DEBUG=False
       - AGENTOS_URL=${AGENTOS_URL:-http://host.docker.internal:8088}
@@ -24,6 +26,7 @@ services:
       - AGENTOS_INSECURE_TLS=${AGENTOS_INSECURE_TLS:-1}
     volumes:
       - __PKG___data:/data
+      - media_data:/data/media
     depends_on:
       - ollama
     restart: always
@@ -32,17 +35,18 @@ services:
     build:
       context: frontend
       dockerfile: Dockerfile.prod
-    image: agentos-__AGENT_ID__-frontend:prod
+    image: agentos-__SLUG__-frontend:prod
     ports:
       - "${AGENT_PORT:-3001}:443"
     volumes:
       - ${CERT_DIR:-C:/agentos-certs}:/certs:ro
+      - media_data:/media:ro
     depends_on:
       - backend
     restart: always
 
   connector:
-    image: agentos-__AGENT_ID__-backend:prod
+    image: agentos-__SLUG__-backend:prod
     command: ["python", "manage.py", "connect_platform"]
     environment:
       - AGENTOS_UI_URL=${AGENTOS_UI_URL:-https://localhost:3001}
@@ -81,3 +85,4 @@ services:
 volumes:
   __PKG___data:
   ollama_data:
+  media_data:
