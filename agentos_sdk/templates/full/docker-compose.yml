@@ -40,7 +40,7 @@ services:
     build:
       context: backend
       dockerfile: Dockerfile
-    image: agentos-__SLUG__-backend:latest
+    image: agentos-__SLUG__-connector:latest
     command: ["python", "manage.py", "connect_platform"]
     environment:
       - AGENTOS_UI_URL=${AGENTOS_UI_URL:-http://localhost:3001}

@@ -4,4 +4,4 @@ django-cors-headers
 python-dotenv
 requests
 gunicorn
-agentos-sdk @ git+https://github.com/Sachin-NLtechnologies/agentos-sdk.git@v0.3.12
+agentos-sdk @ git+https://github.com/Sachin-NLtechnologies/agentos-sdk.git@v0.3.13
