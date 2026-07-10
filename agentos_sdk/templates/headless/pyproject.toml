@@ -1,4 +1,4 @@
 [project]
 name = "agentos-__AGENT_ID__"
 version = "0.1.0"
-dependencies = ["agentos-sdk"]
+dependencies = ["nl-agentos-sdk==0.3.15"]
