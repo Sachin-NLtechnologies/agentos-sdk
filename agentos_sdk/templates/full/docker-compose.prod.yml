@@ -5,7 +5,7 @@ services:
     build:
       context: backend
       dockerfile: Dockerfile.prod
-    image: agentos-__SLUG__-backend:prod
+    image: __SLUG__-backend:prod
     environment:
       - DEBUG=False
       - AGENTOS_URL=${AGENTOS_URL:-http://host.docker.internal:8088}
@@ -31,7 +31,7 @@ services:
     build:
       context: frontend
       dockerfile: Dockerfile.prod
-    image: agentos-__SLUG__-frontend:prod
+    image: __SLUG__-frontend:prod
     ports:
       - "${AGENT_PORT:-3001}:443"
     volumes:
@@ -45,7 +45,7 @@ services:
     build:
       context: backend
       dockerfile: Dockerfile.prod
-    image: agentos-__SLUG__-connector:prod
+    image: __SLUG__-connector:prod
     command: ["python", "manage.py", "connect_platform"]
     environment:
       - AGENTOS_UI_URL=${AGENTOS_UI_URL:-https://localhost:3001}

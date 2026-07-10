@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: agentos-sdk
-Version: 0.2.0
+Version: 0.3.13
 Summary: Official Python SDK + CLI for AgentOS
 Project-URL: Homepage, https://github.com/agentos/agentos-sdk
 Requires-Python: >=3.8
