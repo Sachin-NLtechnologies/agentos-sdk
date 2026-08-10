@@ -1,0 +1,103 @@
+name: __SLUG__
+
+services:
+  backend:
+    image: ghcr.io/sachin-nltechnologies/agentos-__SLUG__-backend:stable
+    env_file: .env
+    volumes:
+      - contact_picker_data:/data
+      - static_data:/app/staticfiles
+      - media_data:/data/media
+    networks:
+      agentos-net:
+        aliases: [__SLUG__-backend]
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  frontend:
+    image: ghcr.io/sachin-nltechnologies/agentos-__SLUG__-frontend:stable
+    env_file: .env
+    volumes:
+      - static_data:/app/staticfiles:ro
+      - media_data:/media:ro
+    networks:
+      agentos-net:
+        aliases: [__SLUG__-frontend]
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  connector:
+    image: ghcr.io/sachin-nltechnologies/agentos-__SLUG__-connector:stable
+    command: ["python", "manage.py", "connect_platform"]
+    env_file: .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - contact_picker_data:/data
+    networks:
+      agentos-net:
+        aliases: [__SLUG__-connector]
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    networks:
+      - agentos-net
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
+
+  worker:
+    image: ghcr.io/sachin-nltechnologies/agentos-__SLUG__-backend:stable
+    command: ["celery", "-A", "contact_picker", "worker", "-l", "info", "--concurrency=1"]
+    env_file: .env
+    volumes:
+      - contact_picker_data:/data
+      - media_data:/data/media
+    networks:
+      - agentos-net
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  beat:
+    image: ghcr.io/sachin-nltechnologies/agentos-__SLUG__-backend:stable
+    command: ["celery", "-A", "contact_picker", "beat", "-l", "info"]
+    env_file: .env
+    volumes:
+      - contact_picker_data:/data
+    networks:
+      - agentos-net
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  watchtower:
+    image: ghcr.io/nicholas-fedor/watchtower:latest
+    environment:
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=300
+      - REPO_USER=${GHCR_USER}
+      - REPO_PASS=${GHCR_PAT}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - agentos-net
+    restart: always
+
+volumes:
+  contact_picker_data:
+  media_data:
+  redis_data:
+  static_data:
+
+networks:
+  agentos-net:
+    external: true
