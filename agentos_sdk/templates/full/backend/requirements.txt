@@ -5,3 +5,6 @@ python-dotenv
 requests
 gunicorn
 nl-agentos-sdk==0.3.15
+
+psycopg2-binary
+dj-database-url

@@ -5,12 +5,15 @@ services:
     image: ghcr.io/sachin-nltechnologies/agentos-__SLUG__-backend:stable
     env_file: .env
     volumes:
-      - contact_picker_data:/data
+      - __PKG___data:/data
       - static_data:/app/staticfiles
       - media_data:/data/media
     networks:
       agentos-net:
         aliases: [__SLUG__-backend]
+    depends_on:
+      __PKG___db:
+        condition: service_healthy
     restart: always
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
@@ -35,10 +38,13 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - contact_picker_data:/data
+      - __PKG___data:/data
     networks:
       agentos-net:
         aliases: [__SLUG__-connector]
+    depends_on:
+      __PKG___db:
+        condition: service_healthy
     restart: always
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
@@ -55,25 +61,31 @@ services:
 
   worker:
     image: ghcr.io/sachin-nltechnologies/agentos-__SLUG__-backend:stable
-    command: ["celery", "-A", "contact_picker", "worker", "-l", "info", "--concurrency=1"]
+    command: ["celery", "-A", "__PKG__", "worker", "-l", "info", "--concurrency=1"]
     env_file: .env
     volumes:
-      - contact_picker_data:/data
+      - __PKG___data:/data
       - media_data:/data/media
     networks:
       - agentos-net
+    depends_on:
+      __PKG___db:
+        condition: service_healthy
     restart: always
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
   beat:
     image: ghcr.io/sachin-nltechnologies/agentos-__SLUG__-backend:stable
-    command: ["celery", "-A", "contact_picker", "beat", "-l", "info"]
+    command: ["celery", "-A", "__PKG__", "beat", "-l", "info"]
     env_file: .env
     volumes:
-      - contact_picker_data:/data
+      - __PKG___data:/data
     networks:
       - agentos-net
+    depends_on:
+      __PKG___db:
+        condition: service_healthy
     restart: always
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
@@ -92,8 +104,28 @@ services:
       - agentos-net
     restart: always
 
+  __PKG___db:
+    image: postgres:16
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-__PKG__}
+      - POSTGRES_USER=${POSTGRES_USER:-__PKG__}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - __PKG___pgdata:/var/lib/postgresql/data
+    networks:
+      - agentos-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-__PKG__} -d ${POSTGRES_DB:-__PKG__}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
+
 volumes:
-  contact_picker_data:
+  __PKG___data:
+  __PKG___pgdata:
   media_data:
   redis_data:
   static_data:
@@ -101,3 +133,4 @@ volumes:
 networks:
   agentos-net:
     external: true
+

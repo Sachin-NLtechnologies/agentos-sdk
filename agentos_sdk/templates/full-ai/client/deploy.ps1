@@ -35,9 +35,11 @@ if (-not $success) {
 
 # Down and clean up orphans to prevent dirty recreation states
 docker compose -f docker-compose.prod.yml down --remove-orphans
-# Up and Migrate
-docker compose -f docker-compose.prod.yml up -d
+# Start backend (which starts db via depends_on) and migrate single-writer
+docker compose -f docker-compose.prod.yml up -d backend
 docker compose -f docker-compose.prod.yml exec backend python manage.py migrate --noinput
+# Start remaining services (worker, beat, connector, frontend, watchtower)
+docker compose -f docker-compose.prod.yml up -d
 
 # Write to .env securely if not present, replacing if they are empty
 $envFile = ".env"

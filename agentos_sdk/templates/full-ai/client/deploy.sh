@@ -31,8 +31,9 @@ if [ "$SUCCESS" = false ]; then
 fi
 
 docker compose -f docker-compose.prod.yml down --remove-orphans
-docker compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml up -d backend
 docker compose -f docker-compose.prod.yml exec backend python manage.py migrate --noinput
+docker compose -f docker-compose.prod.yml up -d
 
 touch .env
 if ! grep -q "^GHCR_USER=" .env; then
