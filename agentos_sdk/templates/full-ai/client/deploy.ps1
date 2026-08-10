@@ -33,6 +33,8 @@ if (-not $success) {
     exit 1
 }
 
+# Down and clean up orphans to prevent dirty recreation states
+docker compose -f docker-compose.prod.yml down --remove-orphans
 # Up and Migrate
 docker compose -f docker-compose.prod.yml up -d
 docker compose -f docker-compose.prod.yml exec backend python manage.py migrate --noinput
