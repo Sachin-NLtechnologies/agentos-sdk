@@ -23,3 +23,5 @@ ollama_data/
 .DS_Store
 .idea/
 .vscode/
+agentos_sdk.egg-info/
+nl_agentos_sdk.egg-info/
