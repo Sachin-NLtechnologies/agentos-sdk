@@ -1,11 +1,11 @@
-name: __SLUG__
+name: ${AGENT_SLUG}
 
 services:
   backend:
     build:
       context: backend
       dockerfile: Dockerfile
-    image: __SLUG__-backend:latest
+    image: ${AGENT_SLUG}-backend:latest
     environment:
       - AGENTOS_OIDC_ISSUER=${AGENTOS_OIDC_ISSUER}
       - AGENTOS_OIDC_PUBLIC_ISSUER=${AGENTOS_OIDC_PUBLIC_ISSUER}
@@ -29,7 +29,7 @@ services:
     build:
       context: frontend
       dockerfile: Dockerfile
-    image: __SLUG__-frontend:latest
+    image: ${AGENT_SLUG}-frontend:latest
     ports:
       - "${AGENT_PORT:-3001}:3001"
     volumes:
@@ -44,7 +44,7 @@ services:
     build:
       context: backend
       dockerfile: Dockerfile
-    image: __SLUG__-connector:latest
+    image: ${AGENT_SLUG}-connector:latest
     command: ["python", "manage.py", "connect_platform"]
     environment:
       - AGENTOS_UI_URL=${AGENTOS_UI_URL:-http://localhost:3001}

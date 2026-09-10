@@ -3,8 +3,12 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+ARG AGENT_BASE_PATH=/
+
+ENV AGENT_BASE_PATH=$AGENT_BASE_PATH
 RUN npm run build
 
 FROM nginx:alpine
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+ENV NGINX_ENVSUBST_FILTER=AGENT_SLUG
+COPY templates/ /etc/nginx/templates/
 COPY --from=build /app/dist /usr/share/nginx/html

@@ -21,3 +21,4 @@ ollama_data/
 .DS_Store
 .idea/
 .vscode/
+.env

@@ -83,7 +83,7 @@ export default function Login() {
           type="button"
           onClick={() => {
             try { localStorage.removeItem("agentos.auth.logged_out"); } catch {}
-            window.location.href = "/api/auth/agentos/start/";
+            window.location.href = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/api/auth/agentos/start/`;
           }}
           style={{ display: "block", textDecoration: "none", textAlign: "center", padding: "12px", width: "100%", borderRadius: "12px", border: "1px solid rgba(160, 140, 255, 0.2)", backgroundColor: "rgba(160, 140, 255, 0.05)", color: "#F4F2FF", fontWeight: "600", transition: "background 0.2s", cursor: "pointer" }}
         >

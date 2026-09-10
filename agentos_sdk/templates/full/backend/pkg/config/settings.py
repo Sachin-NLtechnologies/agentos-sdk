@@ -43,6 +43,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+FORCE_SCRIPT_NAME = os.getenv("AGENT_BASE_PATH", "/").rstrip("/") or None
+
 ROOT_URLCONF = "__PKG__.config.urls"
 
 TEMPLATES = [
@@ -77,7 +79,8 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = "static/"
+_BASE = FORCE_SCRIPT_NAME or ""
+STATIC_URL = f"{_BASE}/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # CORS and CSRF Settings
@@ -120,6 +123,6 @@ REST_FRAMEWORK = {
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-MEDIA_URL = "/media/"
+MEDIA_URL = f"{_BASE}/media/"
 MEDIA_ROOT = "/data/media"
 

@@ -11,6 +11,7 @@ const https =
     : undefined;
 
 export default defineConfig({
+  base: process.env.AGENT_BASE_PATH || "/",
   plugins: [react()],
   server: {
     host: true,

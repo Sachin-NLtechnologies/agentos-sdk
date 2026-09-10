@@ -1,8 +1,8 @@
-name: __SLUG__
+name: ${AGENT_SLUG}
 
 services:
   backend:
-    image: ghcr.io/sachin-nltechnologies/agentos-__SLUG__-backend:stable
+    image: ghcr.io/sachin-nltechnologies/agentos-${AGENT_SLUG}-backend:stable
     env_file: .env
     volumes:
       - __PKG___data:/data
@@ -10,7 +10,7 @@ services:
       - media_data:/data/media
     networks:
       agentos-net:
-        aliases: [__SLUG__-backend]
+        aliases: [${AGENT_SLUG}-backend]
     depends_on:
       __PKG___db:
         condition: service_healthy
@@ -19,20 +19,22 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
 
   frontend:
-    image: ghcr.io/sachin-nltechnologies/agentos-__SLUG__-frontend:stable
+    image: ghcr.io/sachin-nltechnologies/agentos-${AGENT_SLUG}-frontend:stable
+    environment:
+      - AGENT_SLUG=${AGENT_SLUG}
     env_file: .env
     volumes:
       - static_data:/app/staticfiles:ro
       - media_data:/media:ro
     networks:
       agentos-net:
-        aliases: [__SLUG__-frontend]
+        aliases: [${AGENT_SLUG}-frontend]
     restart: always
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
   connector:
-    image: ghcr.io/sachin-nltechnologies/agentos-__SLUG__-connector:stable
+    image: ghcr.io/sachin-nltechnologies/agentos-${AGENT_SLUG}-backend:stable
     command: ["python", "manage.py", "connect_platform"]
     env_file: .env
     extra_hosts:
@@ -41,7 +43,7 @@ services:
       - __PKG___data:/data
     networks:
       agentos-net:
-        aliases: [__SLUG__-connector]
+        aliases: [${AGENT_SLUG}-connector]
     depends_on:
       __PKG___db:
         condition: service_healthy
@@ -60,7 +62,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=false"
 
   worker:
-    image: ghcr.io/sachin-nltechnologies/agentos-__SLUG__-backend:stable
+    image: ghcr.io/sachin-nltechnologies/agentos-${AGENT_SLUG}-backend:stable
     command: ["celery", "-A", "__PKG__", "worker", "-l", "info", "--concurrency=1"]
     env_file: .env
     volumes:
@@ -76,7 +78,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
 
   beat:
-    image: ghcr.io/sachin-nltechnologies/agentos-__SLUG__-backend:stable
+    image: ghcr.io/sachin-nltechnologies/agentos-${AGENT_SLUG}-backend:stable
     command: ["celery", "-A", "__PKG__", "beat", "-l", "info"]
     env_file: .env
     volumes:
