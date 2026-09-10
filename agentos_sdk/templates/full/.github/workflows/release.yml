@@ -7,8 +7,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME_BACKEND: ghcr.io/${{ github.repository }}-backend
-  IMAGE_NAME_FRONTEND: ghcr.io/${{ github.repository }}-frontend
 
 jobs:
   test:
@@ -50,6 +48,10 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+      - name: Set lower case repository name
+        run: |
+          echo "IMAGE_NAME_BACKEND=ghcr.io/${GITHUB_REPOSITORY,,}-backend" >> $GITHUB_ENV
+          echo "IMAGE_NAME_FRONTEND=ghcr.io/${GITHUB_REPOSITORY,,}-frontend" >> $GITHUB_ENV
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Log in to the Container registry
