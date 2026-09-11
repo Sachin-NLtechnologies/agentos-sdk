@@ -4,15 +4,14 @@ services:
   backend:
     image: ghcr.io/sachin-nltechnologies/${AGENT_SLUG}-backend:stable
     env_file: .env
-    environment:
-      - DATABASE_URL=postgres://${POSTGRES_USER:-__PKG__}:${POSTGRES_PASSWORD}@__PKG___db:5432/${POSTGRES_DB:-__PKG__}
     volumes:
       - __PKG___data:/data
       - static_data:/app/staticfiles
       - media_data:/data/media
     networks:
       agentos-net:
-        aliases: [${AGENT_SLUG}-backend]
+        aliases:
+          - "${AGENT_SLUG}-backend"
     depends_on:
       __PKG___db:
         condition: service_healthy
@@ -30,7 +29,8 @@ services:
       - media_data:/media:ro
     networks:
       agentos-net:
-        aliases: [${AGENT_SLUG}-frontend]
+        aliases:
+          - "${AGENT_SLUG}-frontend"
     restart: always
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
@@ -45,7 +45,8 @@ services:
       - __PKG___data:/data
     networks:
       agentos-net:
-        aliases: [${AGENT_SLUG}-connector]
+        aliases:
+          - "${AGENT_SLUG}-connector"
     depends_on:
       __PKG___db:
         condition: service_healthy
@@ -90,9 +91,8 @@ volumes:
   __PKG___data:
   __PKG___pgdata:
   media_data:
-static_data:
+  static_data:
 
 networks:
   agentos-net:
     external: true
-
