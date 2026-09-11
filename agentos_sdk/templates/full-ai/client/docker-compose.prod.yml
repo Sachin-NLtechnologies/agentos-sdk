@@ -4,6 +4,8 @@ services:
   backend:
     image: ghcr.io/sachin-nltechnologies/${AGENT_SLUG}-backend:stable
     env_file: .env
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER:-__PKG__}:${POSTGRES_PASSWORD}@__PKG___db:5432/${POSTGRES_DB:-__PKG__}
     volumes:
       - __PKG___data:/data
       - static_data:/app/staticfiles
@@ -23,6 +25,8 @@ services:
     environment:
       - AGENT_SLUG=${AGENT_SLUG}
     env_file: .env
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER:-__PKG__}:${POSTGRES_PASSWORD}@__PKG___db:5432/${POSTGRES_DB:-__PKG__}
     volumes:
       - static_data:/app/staticfiles:ro
       - media_data:/media:ro
@@ -37,6 +41,8 @@ services:
     image: ghcr.io/sachin-nltechnologies/${AGENT_SLUG}-backend:stable
     command: ["python", "manage.py", "connect_platform"]
     env_file: .env
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER:-__PKG__}:${POSTGRES_PASSWORD}@__PKG___db:5432/${POSTGRES_DB:-__PKG__}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
