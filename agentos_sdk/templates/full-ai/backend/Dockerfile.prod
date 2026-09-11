@@ -4,5 +4,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc git && rm -
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
+RUN apt-get update && apt-get install -y --no-install-recommends postgresql-client && rm -rf /var/lib/apt/lists/*
 EXPOSE 8000
-CMD ["sh","-c","python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn __PKG__.config.wsgi:application --bind 0.0.0.0:8000"]
+CMD ["sh","-c","until pg_isready -h $(echo $DATABASE_URL | sed 's|.*@||' | cut -d: -f1) -p 5432; do echo 'Waiting for postgres...'; sleep 2; done && python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn __PKG__.config.wsgi:application --bind 0.0.0.0:8000"]
