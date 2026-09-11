@@ -79,6 +79,6 @@ jobs:
           push: true
           tags: ${{ env.IMAGE_NAME_FRONTEND }}:stable
           build-args: |
-            AGENT_BASE_PATH=/a/${{ vars.AGENT_SLUG }}/
+            AGENT_BASE_PATH=/a/__SLUG__/
           cache-from: type=gha,scope=frontend
           cache-to: type=gha,scope=frontend,mode=max
